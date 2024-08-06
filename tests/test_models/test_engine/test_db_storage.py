@@ -67,6 +67,43 @@ test_db_storage.py'])
             self.assertTrue(len(func[1].__doc__) >= 1,
                             "{:s} method needs a docstring".format(func[0]))
 
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_get(self):
+        """Test that get properly gets an objects based on class and id"""
+        storage.reload()
+        state = State(name="Arizona")
+        storage.new(state)
+        storage.save()
+        self.assertEqual(storage.get("State", state.id), state)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_get_none(self):
+        """Test that get properly gets an objects based on class and id"""
+        storage.reload()
+        self.assertEqual(storage.get("State", "-1"), None)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_count(self):
+        """Test that get properly gets an objects based on class and id"""
+        storage.reload()
+        original_count = storage.count("State")
+        state = State(name="Arizona")
+        storage.new(state)
+        storage.save()
+        self.assertEqual(storage.count("State"), original_count + 1)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_count_none(self):
+        """Test that get properly gets an objects based on class and id"""
+        storage.reload()
+        original_count = storage.count()
+        original_state_count = storage.count("State")
+        state = State(name="Arizona")
+        storage.new(state)
+        storage.save()
+        self.assertEqual(storage.count("State"), original_state_count + 1)
+        self.assertEqual(storage.count(), original_count + 1)
+
 
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
